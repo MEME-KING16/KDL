@@ -1,0 +1,17 @@
+{
+	"geode": "5.0.0",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "memeking16.kdl",
+	"name": "kdl",
+	"version": "v1.0.0",
+	"developer": "MEMEKING16",
+	"description": "",
+	"dependencies": {
+		"geode.node-ids": ">=v1.20.0"
+	}
+}
