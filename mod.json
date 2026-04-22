@@ -14,6 +14,18 @@
 	"dependencies": {
 		"geode.node-ids": ">=v1.20.0"
 	},
+	"links": {
+		"source": "https://github.com/MEME-KING16/KDL",
+		"community": "https://discord.gg/ZzFg59fS"
+	},
+	"issues": {
+		"info": "If you have an issue with the mod please report it here!",
+		"url": "https://github.com/MEME-KING16/KDL/issues"
+	},
+	"tags": [
+		"gameplay",
+		"interface"
+	],
 	"resources": {
 		"files": [
 			"resources/icon.png"
