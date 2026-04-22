@@ -18,12 +18,12 @@ protected:
         background->setScaleX(winSize.width / background->getContentSize().width);
         background->setScaleY(winSize.height / background->getContentSize().height);
         background->setPosition(winSize / 2);
-        background->setColor({ 0, 40, 80 });
+        background->setColor({0, 40, 80});
         this->addChild(background, -1);
 
         // top "stuff"
-        auto topBar = CCLayerColor::create({ 0, 0, 0, 120 }, winSize.width, 50.f);
-        topBar->setPosition({ 0, winSize.height - 50.f });
+        auto topBar = CCLayerColor::create({0, 0, 0, 120}, winSize.width, 50.f);
+        topBar->setPosition({0, winSize.height - 50.f});
         this->addChild(topBar);
 
         // title
@@ -39,12 +39,12 @@ protected:
         );
         auto backMenu = CCMenu::create();
         backMenu->addChild(backButton);
-        backMenu->setPosition({ 25.f, winSize.height - 25.f });
+        backMenu->setPosition({25.f, winSize.height - 25.f});
         this->addChild(backMenu);
 
         auto emptyArray = CCArray::create();
         auto listView = ListView::create(emptyArray, 40.f, 356.f, 220.f);
-        m_listLayer = GJListLayer::create(listView, "", { 0, 0, 0, 180 }, 356.f, 220.f, 0);
+        m_listLayer = GJListLayer::create(listView, "", {0, 0, 0, 180}, 356.f, 220.f, 0);
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer);
         
@@ -75,7 +75,7 @@ protected:
         float contentHeight = std::max(totalHeight, listHeight);
 
         auto contentLayer = CCLayer::create();
-        contentLayer->setContentSize({ listWidth, contentHeight });
+        contentLayer->setContentSize({listWidth, contentHeight});
 
         int rank = 1;
         for (auto& entry : entries) {
@@ -105,8 +105,8 @@ protected:
             // name label
             auto nameLeaderboardLayer = CCLabelBMFont::create(name.c_str(), "bigFont.fnt");
             nameLeaderboardLayer->setScale(0.4f);
-            nameLeaderboardLayer->setAnchorPoint({ 0.f, 0.5f });
-            nameLeaderboardLayer->setPosition({ 45.f, y });
+            nameLeaderboardLayer->setAnchorPoint({0.f, 0.5f});
+            nameLeaderboardLayer->setPosition({45.f, y});
             contentLayer->addChild(nameLeaderboardLayer);
 
             // points label
@@ -114,15 +114,15 @@ protected:
                 (std::to_string(points) + " pts").c_str(), "bigFont.fnt"
             );
             pointsLeaderboardLayer->setScale(0.35f);
-            pointsLeaderboardLayer->setAnchorPoint({ 1.f, 0.5f });
-            pointsLeaderboardLayer->setPosition({ listWidth - 8.f, y });
+            pointsLeaderboardLayer->setAnchorPoint({1.f, 0.5f});
+            pointsLeaderboardLayer->setPosition({listWidth - 8.f, y});
             contentLayer->addChild(pointsLeaderboardLayer);
 
             rank++;
         }
 
-        auto scrollLayer = ScrollLayer::create({ listWidth, listHeight });
-        scrollLayer->m_contentLayer->setContentSize({ listWidth, contentHeight });
+        auto scrollLayer = ScrollLayer::create({listWidth, listHeight});
+        scrollLayer->m_contentLayer->setContentSize({listWidth, contentHeight});
         scrollLayer->m_contentLayer->addChild(contentLayer);
 
         if (contentHeight > listHeight) {

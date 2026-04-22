@@ -27,7 +27,7 @@ protected:
         background->setScaleX(winSize.width / background->getContentSize().width);
         background->setScaleY(winSize.height / background->getContentSize().height);
         background->setPosition(winSize / 2);
-        background->setColor({ 40, 0, 80 });
+        background->setColor({40, 0, 80});
         this->addChild(background, -1);
 
         // back arrow
@@ -40,17 +40,17 @@ protected:
 
         // node
         auto leaderboardNode = CCNode::create();
-        leaderboardNode->setContentSize({ 30.f, 30.f });
+        leaderboardNode->setContentSize({30.f, 30.f});
 
         // btn bkg
         auto leaderboardBkg = CCScale9Sprite::create("GJ_button_01.png");
-        leaderboardBkg->setContentSize({ 30.f, 30.f });
-        leaderboardBkg->setPosition({ 15.f, 15.f });
+        leaderboardBkg->setContentSize({30.f, 30.f});
+        leaderboardBkg->setPosition({15.f, 15.f});
         leaderboardNode->addChild(leaderboardBkg);
 
         auto trophySprite = CCSprite::createWithSpriteFrameName("rankIcon_1_001.png");
         trophySprite->setScale(0.6f);
-        trophySprite->setPosition({ 15.f, 15.f });
+        trophySprite->setPosition({15.f, 15.f});
         leaderboardNode->addChild(trophySprite);
         auto leaderboardButton = CCMenuItemSpriteExtra::create(
             leaderboardNode, this, menu_selector(KDLListLayer::onOpenLeaderboard)
@@ -60,18 +60,18 @@ protected:
 
         // node
         auto creatorLeaderboardNode = CCNode::create();
-        creatorLeaderboardNode->setContentSize({ 30.f, 30.f });
+        creatorLeaderboardNode->setContentSize({30.f, 30.f});
         
         // btn bkg
         auto creatorLeaderboardBkg = CCScale9Sprite::create("GJ_button_01.png");
-        creatorLeaderboardBkg->setContentSize({ 30.f, 30.f });
-        creatorLeaderboardBkg->setPosition({ 15.f, 15.f });
+        creatorLeaderboardBkg->setContentSize({30.f, 30.f});
+        creatorLeaderboardBkg->setPosition({15.f, 15.f});
         creatorLeaderboardNode->addChild(creatorLeaderboardBkg);
 
         
         auto creatorSprite = CCSprite::createWithSpriteFrameName("GJ_hammerIcon_001.png");
         creatorSprite->setScale(0.6f);
-        creatorSprite->setPosition({ 15.f, 15.f });
+        creatorSprite->setPosition({15.f, 15.f});
         creatorLeaderboardNode->addChild(creatorSprite);
         auto creatorLeaderboardButton = CCMenuItemSpriteExtra::create(
             creatorLeaderboardNode, this, menu_selector(KDLListLayer::onOpenCreatorLeaderboard)
@@ -82,16 +82,16 @@ protected:
         topMenu->addChild(backButton);
         topMenu->addChild(leaderboardButton);
         topMenu->addChild(creatorLeaderboardButton);
-        topMenu->setPosition({ 0.f, 0.f });
-        backButton->setPosition({ 25.f, winSize.height - 25.f });
-        leaderboardButton->setPosition({ 65.f, winSize.height - 25.f });
-        creatorLeaderboardButton->setPosition({ 100.f, winSize.height - 25.f });
+        topMenu->setPosition({0.f, 0.f});
+        backButton->setPosition({25.f, winSize.height - 25.f});
+        leaderboardButton->setPosition({65.f, winSize.height - 25.f});
+        creatorLeaderboardButton->setPosition({100.f, winSize.height - 25.f});
         this->addChild(topMenu);
 
         // not so top "stuff"  
         m_tabMenu = CCMenu::create();
-        m_tabMenu->setPosition({ 0.f, 0.f });
-        m_tabMenu->setContentSize({ winSize.width, 50.f });
+        m_tabMenu->setPosition({0.f, 0.f});
+        m_tabMenu->setContentSize({winSize.width, 50.f});
 
         auto prevSprite = CCSprite::createWithSpriteFrameName("GJ_arrow_01_001.png");
         prevSprite->setScale(0.7f);
@@ -106,8 +106,8 @@ protected:
             nextSprite, this, menu_selector(KDLListLayer::onNextPage)
         );
 
-        m_prevButton->setPosition({ winSize.width / 2.f - 195.f, 25.f });
-        m_nextButton->setPosition({ winSize.width / 2.f + 195.f, 25.f });
+        m_prevButton->setPosition({winSize.width / 2.f - 195.f, 25.f});
+        m_nextButton->setPosition({winSize.width / 2.f + 195.f, 25.f});
         m_tabMenu->addChild(m_prevButton);
         m_tabMenu->addChild(m_nextButton);
 
@@ -133,20 +133,20 @@ protected:
             bool active = tabIndex == defaultTab;
 
             auto tabBgGreen = CCScale9Sprite::create("GJ_button_01.png");
-            tabBgGreen->setContentSize({ 75.f, 40.f });
-            tabBgGreen->setPosition({ 37.5f, 20.f });
+            tabBgGreen->setContentSize({75.f, 40.f});
+            tabBgGreen->setPosition({37.5f, 20.f});
             tabBgGreen->setVisible(!active);
             m_tabBgsGreen.push_back(tabBgGreen);
 
             auto tabBgBlue = CCScale9Sprite::create("GJ_button_02.png");
-            tabBgBlue->setContentSize({ 75.f, 40.f });
-            tabBgBlue->setPosition({ 37.5f, 20.f });
+            tabBgBlue->setContentSize({75.f, 40.f});
+            tabBgBlue->setPosition({37.5f, 20.f});
             tabBgBlue->setVisible(active);
             m_tabBgsBlue.push_back(tabBgBlue);
 
             auto node = CCNode::create();
-            node->setContentSize({ 75.f, 40.f });
-            lbl->setPosition({ 37.5f, 20.f });
+            node->setContentSize({75.f, 40.f});
+            lbl->setPosition({37.5f, 20.f});
             node->addChild(tabBgGreen);
             node->addChild(tabBgBlue);
             node->addChild(lbl);
@@ -155,7 +155,7 @@ protected:
                 node, this, menu_selector(KDLListLayer::onTabPressed)
             );
             button->setUserObject(CCString::create(tab.url));
-            button->setPosition({ tabStartX + tabIndex * (tabW + tabGap), 25.f });
+            button->setPosition({tabStartX + tabIndex * (tabW + tabGap), 25.f});
             m_tabMenu->addChild(button);
             tabIndex++;
         }
@@ -165,7 +165,7 @@ protected:
 
         auto emptyArr = CCArray::create();
         auto listView = ListView::create(emptyArr, 40.f, 356.f, 220.f);
-        m_listLayer = GJListLayer::create(listView, "KDL", { 0, 0, 0, 180 }, 356.f, 220.f, 0);
+        m_listLayer = GJListLayer::create(listView, "KDL", {0, 0, 0, 180}, 356.f, 220.f, 0);
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer, 1);
         this->addChild(m_tabMenu, 2);
@@ -246,7 +246,7 @@ public:
         }
 
         auto listView = CustomListView::create(levels, BoomListType::Level, 190.f, 356.f);
-        m_listLayer = GJListLayer::create(listView, "KDL", { 0, 0, 0, 180 }, 356.f, 190.f, 0);
+        m_listLayer = GJListLayer::create(listView, "KDL", {0, 0, 0, 180}, 356.f, 190.f, 0);
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer, 1);
     }
@@ -256,7 +256,10 @@ public:
     void onPrevPage(CCObject*) {
         if (m_currentPage <= 0) return;
         m_currentPage--;
-        if (m_listLayer) { m_listLayer->removeFromParent(); m_listLayer = nullptr; }
+        if (m_listLayer) {
+            m_listLayer->removeFromParent();
+            m_listLayer = nullptr;
+        }
         fetchPage(m_currentPage);
     }
 
@@ -264,7 +267,10 @@ public:
         int totalPages = ((int)m_allIds.size() + 10 - 1) / 10;
         if (m_currentPage >= totalPages - 1) return;
         m_currentPage++;
-        if (m_listLayer) { m_listLayer->removeFromParent(); m_listLayer = nullptr; }
+        if (m_listLayer) {
+            m_listLayer->removeFromParent();
+            m_listLayer = nullptr;
+        }
         fetchPage(m_currentPage);
     }
 

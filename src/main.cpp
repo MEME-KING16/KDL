@@ -16,7 +16,7 @@ class $modify(MyCreatorLayer, CreatorLayer) {
 			this,
 			menu_selector(MyCreatorLayer::onKDLButton)
 		);
-		
+
 		auto winSize = CCDirector::get()->getWinSize();
         auto listMenu = CCMenu::create();
 
@@ -24,9 +24,9 @@ class $modify(MyCreatorLayer, CreatorLayer) {
 		KDLButton->setID("kdl-Button"_spr);
 		listMenu->updateLayout();
 		if (Loader::get()->isModLoaded("arcticwoof.rated_layouts")) {
-            listMenu->setPosition({ 24.05f, 67.5f });
+            listMenu->setPosition({24.05f, 67.5f});
         } else {
-            listMenu->setPosition({ 24.05f, 23.5f });
+            listMenu->setPosition({24.05f, 23.5f});
         }
 		this->addChild(listMenu, 10);
 
