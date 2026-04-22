@@ -9,8 +9,8 @@
 	"id": "memeking16.kdl",
 	"name": "The Keanan Demon List",
 	"version": "v1.0.0",
-	"developer": "MEMEKING16",
-	"description": "",
+	"developers": ["MEMEKING16", "Therealkeanan00"],
+	"description": "a silly list (will update this later)",
 	"dependencies": {
 		"geode.node-ids": ">=v1.20.0"
 	},

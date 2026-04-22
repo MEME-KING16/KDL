@@ -22,14 +22,14 @@ protected:
         this->addChild(background, -1);
 
         // top "stuff"
-        auto topBar = CCLayerColor::create({0, 0, 0, 120}, winSize.width, 50.f);
-        topBar->setPosition({0, winSize.height - 50.f});
+        auto topBar = CCLayerColor::create({0, 0, 0, 120}, winSize.width, 50.0f);
+        topBar->setPosition({0, winSize.height - 50.0f});
         this->addChild(topBar);
 
         // title
         auto titleLabel = CCLabelBMFont::create("K.D.L Creator Leaderboard", "goldFont.fnt");
         titleLabel->setScale(0.7f);
-        titleLabel->setPosition({winSize.width / 2.f, winSize.height - 25.f});
+        titleLabel->setPosition({winSize.width / 2.0f, winSize.height - 25.0f});
         this->addChild(titleLabel);
 
         //back btn
@@ -39,12 +39,12 @@ protected:
         );
         auto backMenu = CCMenu::create();
         backMenu->addChild(backButton);
-        backMenu->setPosition({25.f, winSize.height - 25.f});
+        backMenu->setPosition({25.0f, winSize.height - 25.0f});
         this->addChild(backMenu);
 
         auto emptyArray = CCArray::create();
-        auto listView = ListView::create(emptyArray, 40.f, 356.f, 220.f);
-        m_listLayer = GJListLayer::create(listView, "", {0, 0, 0, 180}, 356.f, 220.f, 0);
+        auto listView = ListView::create(emptyArray, 40.0f, 356.0f, 220.0f);
+        m_listLayer = GJListLayer::create(listView, "", {0, 0, 0, 180}, 356.0f, 220.0f, 0);
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer);
         
@@ -67,9 +67,9 @@ protected:
         auto winSize = CCDirector::get()->getWinSize();
 
         auto entries = arr.unwrap();
-        float rowHeight = 40.f;
-        float listWidth = 356.f;
-        float listHeight = 220.f;
+        float rowHeight = 40.0f;
+        float listWidth = 356.0f;
+        float listHeight = 220.0f;
 
         float totalHeight = entries.size() * rowHeight;
         float contentHeight = std::max(totalHeight, listHeight);
@@ -83,14 +83,14 @@ protected:
             auto points = entry.get<int>("points").unwrapOr(0);
             auto id = entry.get<int>("id").unwrapOr(0);
 
-            float y = contentHeight - rank * rowHeight + rowHeight / 2.f;
+            float y = contentHeight - rank * rowHeight + rowHeight / 2.0f;
 
             // row background
             auto rowBackground = CCLayerColor::create(
                 rank % 2 == 0 ? ccColor4B{0, 0, 0, 60} : ccColor4B{255, 255, 255, 15},
                 listWidth, rowHeight
             );
-            rowBackground->setPosition({0, y - rowHeight / 2.f});
+            rowBackground->setPosition({0, y - rowHeight / 2.0f});
             contentLayer->addChild(rowBackground);
 
             // rank label
@@ -98,30 +98,34 @@ protected:
                 ("#" + std::to_string(rank)).c_str(), "bigFont.fnt"
             );
             rankCreatorLeaderboardLayer->setScale(0.35f);
-            rankCreatorLeaderboardLayer->setAnchorPoint({0.f, 0.5f});
-            rankCreatorLeaderboardLayer->setPosition({8.f, y});
+            rankCreatorLeaderboardLayer->setAnchorPoint({0.0f, 0.5f});
+            rankCreatorLeaderboardLayer->setPosition({8.0f, y});
             contentLayer->addChild(rankCreatorLeaderboardLayer);
 
             // name label
             auto nameCreatorLeaderboardLayer = CCLabelBMFont::create(name.c_str(), "bigFont.fnt");
             nameCreatorLeaderboardLayer->setScale(0.4f);
-            nameCreatorLeaderboardLayer->setAnchorPoint({0.f, 0.5f});
-            nameCreatorLeaderboardLayer->setPosition({45.f, y});
+            nameCreatorLeaderboardLayer->setAnchorPoint({0.0f, 0.5f});
+            nameCreatorLeaderboardLayer->setPosition({45.0f, y});
             contentLayer->addChild(nameCreatorLeaderboardLayer);
 
             // points label
-            auto pointsCreatorLeaderboardLayer = CCLabelBMFont::create(
-                (std::to_string(points) + " pts").c_str(), "bigFont.fnt"
-            );
+            auto pointsCreatorLeaderboardLayer = CCLabelBMFont::create(std::to_string(points).c_str(), "bigFont.fnt");
             pointsCreatorLeaderboardLayer->setScale(0.35f);
-            pointsCreatorLeaderboardLayer->setAnchorPoint({1.f, 0.5f});
-            pointsCreatorLeaderboardLayer->setPosition({listWidth - 8.f, y});
+            pointsCreatorLeaderboardLayer->setAnchorPoint({1.0f, 0.5f});
+            pointsCreatorLeaderboardLayer->setPosition({listWidth - 28.0f, y});
             contentLayer->addChild(pointsCreatorLeaderboardLayer);
+
+            auto pointsIcon = CCSprite::createWithSpriteFrameName("GJ_hammerIcon_001.png");
+            pointsIcon->setScale(0.7f);
+            pointsIcon->setAnchorPoint({1.0f, 0.5f});
+            pointsIcon->setPosition({listWidth - 8.0f, y});
+            contentLayer->addChild(pointsIcon);
 
             rank++;
         }
 
-        auto scrollLayer = ScrollLayer::create({listWidth, listHeight});
+        auto scrollLayer = ScrollLayer::create({listWidth, listHeight - 8.0f});
         scrollLayer->m_contentLayer->setContentSize({listWidth, contentHeight});
         scrollLayer->m_contentLayer->addChild(contentLayer);
 
@@ -140,7 +144,7 @@ protected:
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer);
 
-        scrollLayer->setPosition(m_listLayer->getPosition());
+        scrollLayer->setPosition(m_listLayer->getPosition() + CCPoint{0.0f, 4.0f});
         this->addChild(scrollLayer);
     }
 
