@@ -1,9 +1,9 @@
-# Keanan Demon List
-a silly mod
-
-# Credits
-- [therealkeanan00](user:30576486) - the existatnce of the list
-
-# Stuff
-Join the discord if you want to beta test or have any suggestions!
-link to the big K's dc https://discord.gg/fpKkEb7SD5
+# The Keanan Demon List!
+Where skill is earned, not given.
+# Info:
+This is the K.D.L.! A **Demon List for Superbuffed Levels**
+# Credits:
+- [TheRealKeanan00](user:30576486) - the existence of the list!
+# Stuff:
+Link to the big K's Discord: https://discord.gg/fpKkEb7SD5
+Link to my (human) discord server: https://discord.gg/jN4ku3ZXdK (bug report, beta test and suggestions)
