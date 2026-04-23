@@ -21,9 +21,11 @@ protected:
     bool init() {
         if (!CCLayer::init()) return false;
 		auto winSize = CCDirector::get()->getWinSize();
+        this->setID("kdl-list-layer");
 		
         // background
 		auto background = CCSprite::create("GJ_gradientBG.png");
+        background->setID("background");
         background->setScaleX(winSize.width / background->getContentSize().width);
         background->setScaleY(winSize.height / background->getContentSize().height);
         background->setPosition(winSize / 2);
@@ -35,6 +37,7 @@ protected:
         auto backButton = CCMenuItemSpriteExtra::create(
             backSprite, this, menu_selector(KDLListLayer::onBack)
         );
+        backButton->setID("back-button");
 
         // Leaderboard button
 
@@ -55,6 +58,10 @@ protected:
         auto leaderboardButton = CCMenuItemSpriteExtra::create(
             leaderboardNode, this, menu_selector(KDLListLayer::onOpenLeaderboard)
         );
+
+        leaderboardNode->setID("leaderboard-node");
+        leaderboardBkg->setID("button-bkg");
+        leaderboardButton->setID("leaderboard-button");
 
         // Creator Leaderboard button
 
@@ -77,8 +84,13 @@ protected:
             creatorLeaderboardNode, this, menu_selector(KDLListLayer::onOpenCreatorLeaderboard)
         );
 
+        creatorLeaderboardNode->setID("creator-leaderboard-node");
+        creatorLeaderboardBkg->setID("button-bkg");
+        creatorLeaderboardButton->setID("creator-leaderboard-button");
+
         // top "stuff"
 		auto topMenu = CCMenu::create();
+        topMenu->setID("top-menu");
         topMenu->addChild(backButton);
         topMenu->addChild(leaderboardButton);
         topMenu->addChild(creatorLeaderboardButton);
@@ -90,6 +102,7 @@ protected:
 
         // not so top "stuff"  
         m_tabMenu = CCMenu::create();
+        m_tabMenu->setID("tab-menu");
         m_tabMenu->setPosition({0.0f, 0.0f});
         m_tabMenu->setContentSize({winSize.width, 50.0f});
 
@@ -106,8 +119,10 @@ protected:
             nextSprite, this, menu_selector(KDLListLayer::onNextPage)
         );
 
-        m_prevButton->setPosition({winSize.width / 2.0f - 195.0f, 25.0f});
-        m_nextButton->setPosition({winSize.width / 2.0f + 195.0f, 25.0f});
+        m_prevButton->setID("prev-page-button");
+        m_nextButton->setID("next-page-button");
+        m_prevButton->setPosition({winSize.width / 2.0f - 210.0f, winSize.height / 2.0f});
+        m_nextButton->setPosition({winSize.width / 2.0f + 210.0f, winSize.height / 2.0f});
         m_tabMenu->addChild(m_prevButton);
         m_tabMenu->addChild(m_nextButton);
 
@@ -128,32 +143,37 @@ protected:
         int tabIndex = 0;
         for (auto& tab : tabs) {
             auto lbl = CCLabelBMFont::create(tab.label, "bigFont.fnt");
+            lbl->setID("label");
             lbl->setScale(0.3f);
 
             bool active = tabIndex == defaultTab;
 
-            auto tabBgGreen = CCScale9Sprite::create("GJ_button_01.png");
-            tabBgGreen->setContentSize({75.0f, 40.0f});
-            tabBgGreen->setPosition({37.5f, 20.0f});
-            tabBgGreen->setVisible(!active);
-            m_tabBgsGreen.push_back(tabBgGreen);
+            auto tabBkgGreen = CCScale9Sprite::create("GJ_button_01.png");
+            tabBkgGreen->setID("bkg-green");
+            tabBkgGreen->setContentSize({75.0f, 40.0f});
+            tabBkgGreen->setPosition({37.5f, 20.0f});
+            tabBkgGreen->setVisible(!active);
+            m_tabBkgsGreen.push_back(tabBkgGreen);
 
-            auto tabBgBlue = CCScale9Sprite::create("GJ_button_02.png");
-            tabBgBlue->setContentSize({75.0f, 40.0f});
-            tabBgBlue->setPosition({37.5f, 20.0f});
-            tabBgBlue->setVisible(active);
-            m_tabBgsBlue.push_back(tabBgBlue);
+            auto tabBkgBlue = CCScale9Sprite::create("GJ_button_02.png");
+            tabBkgBlue->setID("bkg-blue");
+            tabBkgBlue->setContentSize({75.0f, 40.0f});
+            tabBkgBlue->setPosition({37.5f, 20.0f});
+            tabBkgBlue->setVisible(active);
+            m_tabBkgsBlue.push_back(tabBkgBlue);
 
             auto node = CCNode::create();
+            node->setID(fmt::format("tab-node-{}", tabIndex));
             node->setContentSize({75.0f, 40.0f});
             lbl->setPosition({37.5f, 20.0f});
-            node->addChild(tabBgGreen);
-            node->addChild(tabBgBlue);
+            node->addChild(tabBkgGreen);
+            node->addChild(tabBkgBlue);
             node->addChild(lbl);
 
             auto button = CCMenuItemSpriteExtra::create(
                 node, this, menu_selector(KDLListLayer::onTabPressed)
             );
+            button->setID(fmt::format("tab-button-{}", tabIndex));
             button->setUserObject(CCString::create(tab.url));
             button->setPosition({tabStartX + tabIndex * (tabW + tabGap), 25.0f});
             m_tabMenu->addChild(button);
@@ -166,6 +186,7 @@ protected:
         auto emptyArr = CCArray::create();
         auto listView = ListView::create(emptyArr, 40.0f, 356.0f, 220.0f);
         m_listLayer = GJListLayer::create(listView, "KDL", {0, 0, 0, 180}, 356.0f, 220.0f, 0);
+        m_listLayer->setID("list-layer");
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer, 1);
         this->addChild(m_tabMenu, 2);
@@ -247,6 +268,7 @@ public:
 
         auto listView = CustomListView::create(levels, BoomListType::Level, 190.0f, 356.0f);
         m_listLayer = GJListLayer::create(listView, "KDL", {0, 0, 0, 180}, 356.0f, 190.0f, 0);
+        m_listLayer->setID("list-layer");
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer, 1);
     }
@@ -308,6 +330,8 @@ public:
 	void onBack(CCObject*) {
         CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
     }
+
+    void keyBackClicked() override { onBack(nullptr); }
 
     void onOpenLeaderboard(CCObject*) {
         CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, LeaderboardLayer::scene()));

@@ -153,6 +153,8 @@ protected:
         CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
     }
 
+    void keyBackClicked() override { onBack(nullptr); }
+
 public:
     static LeaderboardLayer* create() {
         auto ret = new LeaderboardLayer();
