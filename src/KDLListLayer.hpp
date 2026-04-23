@@ -12,8 +12,8 @@ protected:
     std::vector<int> m_allIds;
     GJListLayer* m_listLayer = nullptr;
     CCMenu* m_tabMenu = nullptr;
-    std::vector<CCScale9Sprite*> m_tabBgsGreen;
-    std::vector<CCScale9Sprite*> m_tabBgsBlue;
+    std::vector<CCScale9Sprite*> m_tabBkgsGreen;
+    std::vector<CCScale9Sprite*> m_tabBkgsBlue;
     CCMenuItemSpriteExtra* m_prevButton = nullptr;
     CCMenuItemSpriteExtra* m_nextButton = nullptr;
     int m_currentPage = 0;
@@ -317,10 +317,10 @@ public:
         int i = 0;
         for (auto* child : CCArrayExt<CCNode*>(m_tabMenu->getChildren())) {
             if (child == m_prevButton || child == m_nextButton) continue;
-            if (i >= (int)m_tabBgsGreen.size()) break;
+            if (i >= (int)m_tabBkgsGreen.size()) break;
             bool active = child == btn;
-            m_tabBgsGreen[i]->setVisible(!active);
-            m_tabBgsBlue[i]->setVisible(active);
+            m_tabBkgsGreen[i]->setVisible(!active);
+            m_tabBkgsBlue[i]->setVisible(active);
             i++;
         }
 
