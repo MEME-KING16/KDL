@@ -22,6 +22,8 @@ protected:
         if (!CCLayer::init()) return false;
 		auto winSize = CCDirector::get()->getWinSize();
         this->setID("kdl-list-layer");
+        this->setKeyboardEnabled(true);
+        this->setKeypadEnabled(true);
 		
         // background
 		auto background = CCSprite::create("GJ_gradientBG.png");
@@ -331,7 +333,9 @@ public:
         CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
     }
 
-    void keyBackClicked() override { onBack(nullptr); }
+    void keyBackClicked() override {
+        CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
+    }
 
     void onOpenLeaderboard(CCObject*) {
         CCDirector::get()->pushScene(CCTransitionFade::create(0.5f, LeaderboardLayer::scene()));

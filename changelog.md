@@ -1,3 +1,5 @@
+# 1.0.3
+- esc
 # 1.0.2
 - NOTHING I JUST UPLOADED THE WRONG BIN
 # 1.0.1
