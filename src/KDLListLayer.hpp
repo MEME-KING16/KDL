@@ -17,6 +17,7 @@ protected:
     CCMenuItemSpriteExtra* m_prevButton = nullptr;
     CCMenuItemSpriteExtra* m_nextButton = nullptr;
     int m_currentPage = 0;
+    std::string m_currentUrl;
 
     bool init() {
         if (!CCLayer::init()) return false;
@@ -128,6 +129,16 @@ protected:
         m_tabMenu->addChild(m_prevButton);
         m_tabMenu->addChild(m_nextButton);
 
+        auto refreshSpr = CCSprite::createWithSpriteFrameName("GJ_updateBtn_001.png");
+        auto refreshBtn = CCMenuItemSpriteExtra::create(
+            refreshSpr, this, menu_selector(KDLListLayer::onRefresh)
+        );
+        
+        auto refreshMenu = CCMenu::create();
+        refreshMenu->addChild(refreshBtn);
+        refreshMenu->setPosition({ winSize.width - 25.f, winSize.height - 25.f });
+        this->addChild(refreshMenu);
+
         struct Tab { const char* label; const char* url; };
         Tab tabs[] = {
             {"Nerfed\nVerified", BASE_URL "NerfedVerified.json"},
@@ -215,6 +226,7 @@ public:
     }
 
     void loadTab(std::string url) {
+        m_currentUrl = url;
         auto res = web::WebRequest().getSync(url);
         if (!res.ok()) {
             return;
@@ -303,6 +315,15 @@ public:
         if (glm->m_levelManagerDelegate == this)
             glm->m_levelManagerDelegate = nullptr;
         CCLayer::onExit();
+    }
+
+    void onRefresh(CCObject*) {
+        if (m_listLayer) {
+            m_listLayer->removeFromParent();
+            m_listLayer = nullptr;
+        }
+        if (!m_currentUrl.empty())
+            loadTab(m_currentUrl);
     }
 
     void onEnter() override {

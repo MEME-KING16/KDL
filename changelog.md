@@ -1,3 +1,6 @@
+# 1.1.0
+- refresh button
+- readme
 # 1.0.3
 - esc
 # 1.0.2

@@ -44,6 +44,16 @@ protected:
         backMenu->setPosition({25.0f, winSize.height - 25.0f});
         this->addChild(backMenu);
 
+        auto refreshSpr = CCSprite::createWithSpriteFrameName("GJ_updateBtn_001.png");
+        auto refreshBtn = CCMenuItemSpriteExtra::create(
+            refreshSpr, this, menu_selector(CreatorLeaderboardLayer::onRefresh)
+        );
+
+        auto refreshMenu = CCMenu::create();
+        refreshMenu->addChild(refreshBtn);
+        refreshMenu->setPosition({ winSize.width - 25.f, winSize.height - 25.f });
+        this->addChild(refreshMenu);
+
         auto emptyArray = CCArray::create();
         auto listView = ListView::create(emptyArray, 40.0f, 356.0f, 220.0f);
         m_listLayer = GJListLayer::create(listView, "", {0, 0, 0, 180}, 356.0f, 220.0f, 0);
@@ -150,6 +160,9 @@ protected:
         this->addChild(scrollLayer);
     }
 
+    void onRefresh(CCObject*) {
+        loadCreatorLeaderboard();
+    }
 
     void onBack(CCObject*) {
         CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
