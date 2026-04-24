@@ -7,6 +7,7 @@ class CreatorLeaderboardLayer : public CCLayer {
 protected:
     CCNode* m_listNode = nullptr;
     GJListLayer* m_listLayer = nullptr;
+    ScrollLayer* m_scrollLayer = nullptr;
 
     bool init() {
         if (!CCLayer::init()) return false;
@@ -66,6 +67,15 @@ protected:
     }
 
     void loadCreatorLeaderboard() {
+        if (m_listLayer) {
+            m_listLayer->removeFromParent();
+            m_listLayer = nullptr;
+        }
+        if (m_scrollLayer) {
+            m_scrollLayer->removeFromParent();
+            m_scrollLayer = nullptr;
+        }
+        
         auto res = web::WebRequest().getSync("https://raw.githubusercontent.com/Therealkeanan00/Keanan-Demon-List-Updated-Geometry-Dash/main/CreatorLeaderboard.json");
         if (!res.ok()) return;
 
@@ -137,12 +147,12 @@ protected:
             rank++;
         }
 
-        auto scrollLayer = ScrollLayer::create({listWidth, listHeight - 8.0f});
-        scrollLayer->m_contentLayer->setContentSize({listWidth, contentHeight});
-        scrollLayer->m_contentLayer->addChild(contentLayer);
+        m_scrollLayer = ScrollLayer::create({listWidth, listHeight - 8.0f});
+        m_scrollLayer->m_contentLayer->setContentSize({listWidth, contentHeight});
+        m_scrollLayer->m_contentLayer->addChild(contentLayer);
 
         if (contentHeight > listHeight) {
-            scrollLayer->m_contentLayer->setPositionY(listHeight - contentHeight);
+            m_scrollLayer->m_contentLayer->setPositionY(listHeight - contentHeight);
         }
 
         if (m_listLayer) {
@@ -156,8 +166,8 @@ protected:
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer);
 
-        scrollLayer->setPosition(m_listLayer->getPosition() + CCPoint{0.0f, 4.0f});
-        this->addChild(scrollLayer);
+        m_scrollLayer->setPosition(m_listLayer->getPosition() + CCPoint{0.0f, 4.0f});
+        this->addChild(m_scrollLayer);
     }
 
     void onRefresh(CCObject*) {

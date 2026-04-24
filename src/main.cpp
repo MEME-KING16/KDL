@@ -23,12 +23,11 @@ class $modify(MyCreatorLayer, CreatorLayer) {
 		listMenu->addChild(KDLButton);
 		KDLButton->setID("kdl-Button"_spr);
 		listMenu->updateLayout();
-		if (Loader::get()->isModLoaded("arcticwoof.rated_layouts")) {
-            listMenu->setPosition({24.05f, 67.5f});
-        } else {
-            listMenu->setPosition({24.05f, 23.5f});
+		if (this->getChildByID("bottom-left-menu")) {
+			auto menu = this->getChildByID("bottom-left-menu");
+            menu->addChild(KDLButton);
+        	menu->updateLayout();
         }
-		this->addChild(listMenu, 10);
 
 		return true;
 	}

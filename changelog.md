@@ -1,3 +1,6 @@
+# 1.1.1
+- node ids
+- fixed leak
 # 1.1.0
 - refresh button
 - readme
