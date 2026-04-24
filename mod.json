@@ -12,7 +12,8 @@
 	"developers": ["MEMEKING16", "Therealkeanan00"],
 	"description": "a silly list (will update this later)",
 	"dependencies": {
-		"geode.node-ids": ">=v1.20.0"
+		"geode.node-ids": ">=v1.20.0",
+		"jouca.badgesapi": ">=v1.4.2"
 	},
 	"links": {
 		"source": "https://github.com/MEME-KING16/KDL",
@@ -28,7 +29,8 @@
 	],
 	"resources": {
 		"files": [
-			"resources/icon.png"
+			"resources/icon.png",
+			"resources/owner.png"
 		]
 	}
 }
