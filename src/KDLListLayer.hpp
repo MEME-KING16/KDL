@@ -1,5 +1,6 @@
 #pragma once
 #include <Geode/Geode.hpp>
+#include <Geode/utils/web.hpp>
 #include "CreatorLeaderboardLayer.hpp"
 #include "LeaderboardLayer.hpp"
 
@@ -16,6 +17,8 @@ protected:
     std::vector<CCScale9Sprite*> m_tabBkgsBlue;
     CCMenuItemSpriteExtra* m_prevButton = nullptr;
     CCMenuItemSpriteExtra* m_nextButton = nullptr;
+    CCMenuItemSpriteExtra* m_discordButton = nullptr;
+    CCMenuItemSpriteExtra* m_siteButton = nullptr;
     int m_currentPage = 0;
     std::string m_currentUrl;
 
@@ -133,7 +136,7 @@ protected:
         auto refreshBtn = CCMenuItemSpriteExtra::create(
             refreshSpr, this, menu_selector(KDLListLayer::onRefresh)
         );
-        
+
         auto refreshMenu = CCMenu::create();
         refreshMenu->addChild(refreshBtn);
         refreshMenu->setPosition({ winSize.width - 25.f, winSize.height - 25.f });
@@ -192,6 +195,26 @@ protected:
             m_tabMenu->addChild(button);
             tabIndex++;
         }
+
+        auto discordSprite = CCSprite::createWithSpriteFrameName("gj_discordIcon_001.png");
+        m_discordButton = CCMenuItemSpriteExtra::create(
+            discordSprite, this, menu_selector(KDLListLayer::onDiscordButton)
+        );
+
+        m_discordButton->setPosition({winSize.width / 2.0f + 210.0f, 23.0f});
+
+        m_tabMenu->addChild(m_discordButton);
+
+
+        auto siteSprite = CCSprite::createWithSpriteFrameName("geode.loader/homepage.png");
+        m_siteButton = CCMenuItemSpriteExtra::create(
+            siteSprite, this, menu_selector(KDLListLayer::onSiteButton)
+        );
+
+        m_siteButton->setPosition({winSize.width / 2.0f + 245.0f, 23.0f});
+
+        m_tabMenu->addChild(m_siteButton);
+
 
     
         loadTab(BASE_URL "BuffedVerified.json");
@@ -348,6 +371,14 @@ public:
         }
 
         loadTab(urlObj->getCString());
+    }
+
+    void onDiscordButton(CCObject* sender) {
+        geode::utils::web::openLinkInBrowser("https://discord.gg/fpKkEb7SD5");
+    }
+
+    void onSiteButton(CCObject* sender) {
+        geode::utils::web::openLinkInBrowser("https://sites.google.com/view/therealkeanan00s-demon-list/home"); // whoever is reviewing THIS WILL BE A NORMAL SITE SOON
     }
 
 	void onBack(CCObject*) {

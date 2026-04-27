@@ -1,3 +1,5 @@
+# 1.2.0
+- discord and site button
 # 1.1.1
 - node ids
 - fixed leak
