@@ -3,10 +3,10 @@ Where skill is earned, not given.
 # Info:
 This is the K.D.L.! A **Demon List for Superbuffed Levels**
 # Credits:
-- [TheRealKeanan00](user:30576486) - the existence of the list!
+- [Therealkeanan00](user:30576486) - the existence of the list!
 # Stuff:
 Join the Discord if you want to beta test or have any suggestions!
 # Discord Servers:
-Link to Human's discord server: https://discord.gg/jN4ku3ZXdK (Bug reports & Beta Testing)
+Human's discord server: https://discord.gg/jN4ku3ZXdK (Bug reports & Beta Testing)
 
-Link to the big K's Discord: https://discord.gg/fpKkEb7SD5 (Where the K.D.L. Originated)
+The big K's Discord: https://discord.gg/fpKkEb7SD5 (Where the K.D.L. Originated)
