@@ -116,28 +116,40 @@ protected:
                 lastTab = entry.tab;
                 y -= HEADER_HEIGHT;
 
+                auto headerRow = CCNode::create();
+                headerRow->setContentSize({LIST_WIDTH, HEADER_HEIGHT});
+                headerRow->setAnchorPoint({0.0f, 0.0f});
+                headerRow->setPosition({0.0f, y});
+                content->addChild(headerRow);
+
                 auto headerBg = CCLayerColor::create(ccc4(0, 0, 0, 110), LIST_WIDTH, HEADER_HEIGHT);
-                headerBg->setPosition({0.0f, y});
-                content->addChild(headerBg);
+                headerBg->setPosition({0.0f, 0.0f});
+                headerRow->addChild(headerBg);
 
                 auto header = CCLabelBMFont::create(entry.tab.c_str(), "bigFont.fnt");
                 header->limitLabelWidth(LIST_WIDTH - 60.0f, 0.5f, 0.1f);
-                header->setPosition({LIST_WIDTH / 2.0f, y + HEADER_HEIGHT / 2.0f});
-                content->addChild(header);
+                header->setPosition({LIST_WIDTH / 2.0f, HEADER_HEIGHT / 2.0f});
+                headerRow->addChild(header);
             }
 
             y -= PLAYER_HEIGHT;
 
+            auto row = CCNode::create();
+            row->setContentSize({LIST_WIDTH, PLAYER_HEIGHT});
+            row->setAnchorPoint({0.0f, 0.0f});
+            row->setPosition({0.0f, y});
+            content->addChild(row);
+
             auto rowBg = CCLayerColor::create(
                 ccc4(0, 0, 0, rowIndex++ % 2 == 0 ? 60 : 30), LIST_WIDTH, PLAYER_HEIGHT
             );
-            rowBg->setPosition({0.0f, y});
-            content->addChild(rowBg);
+            rowBg->setPosition({0.0f, 0.0f});
+            row->addChild(rowBg);
 
             auto player = SimplePlayer::create(1);
             player->updatePlayerFrame(1, IconType::Cube);
-            player->setPosition({35.0f, y + PLAYER_HEIGHT / 2.0f});
-            content->addChild(player);
+            player->setPosition({35.0f, PLAYER_HEIGHT / 2.0f});
+            row->addChild(player);
             if (entry.accountId > 0) m_playerNodes[entry.accountId].push_back(player);
 
             auto nameLabel = CCLabelBMFont::create(entry.name.c_str(), "goldFont.fnt");
@@ -146,15 +158,17 @@ protected:
             nameLabel->setAnchorPoint({0.0f, 0.5f});
 
             auto menu = CCMenu::create();
+            menu->setContentSize({LIST_WIDTH, PLAYER_HEIGHT});
+            menu->setAnchorPoint({0.0f, 0.0f});
             menu->setPosition({0.0f, 0.0f});
             auto nameBtn = CCMenuItemSpriteExtra::create(
                 nameLabel, this, menu_selector(KDLCreditsPopup::onProfile)
             );
             nameBtn->setTag(entry.accountId);
             nameBtn->setAnchorPoint({0.0f, 0.5f});
-            nameBtn->setPosition({65.0f, y + PLAYER_HEIGHT / 2.0f});
+            nameBtn->setPosition({65.0f, PLAYER_HEIGHT / 2.0f});
             menu->addChild(nameBtn);
-            content->addChild(menu);
+            row->addChild(menu);
         }
 
         m_scroll->moveToTop();

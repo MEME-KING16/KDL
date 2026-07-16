@@ -1,3 +1,5 @@
+# 1.6.1
+- Fixed credits elements loading in and out randomly whens scrolling along with adding a search bar accross all K.D.L. pages.
 # 1.6.0
 - MASSIVE overhall with features and polishing including a credits page, bug fixes, and visual improvements.
 # 1.5.3

@@ -10,9 +10,18 @@
 
 using namespace geode::prelude;
 
+struct KDLLevelEntry {
+    int id;
+    std::string name;
+};
+
 class KDLListLayer : public CCLayer, public LevelManagerDelegate {
 protected:
     std::vector<int> m_allIds;
+    std::vector<KDLLevelEntry> m_allLevels;
+    Ref<CCMenu> m_searchBarMenu;
+    TextInput* m_searchBar = nullptr;
+    std::string m_query;
     GJListLayer* m_listLayer = nullptr;
     CCMenu* m_tabMenu = nullptr;
     std::vector<CCScale9Sprite*> m_tabBkgsGreen;
@@ -244,13 +253,44 @@ protected:
 
 
 
-        auto emptyArr = CCArray::create();
-        auto listView = ListView::create(emptyArr, 40.0f, 356.0f, 220.0f);
-        m_listLayer = GJListLayer::create(listView, "KDL", {0, 0, 0, 180}, 356.0f, 220.0f, 0);
+        m_listLayer = GJListLayer::create(nullptr, "KDL", {0, 0, 0, 180}, 356.0f, 220.0f, 0);
         m_listLayer->setID("list-layer");
         m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
         this->addChild(m_listLayer, 1);
         this->addChild(m_tabMenu, 2);
+        // search bar "borrowed" from the DDL Integration
+        m_searchBarMenu = CCMenu::create();
+        m_searchBarMenu->setContentSize({356.0f, 30.0f});
+        m_searchBarMenu->setPosition({0.0f, 190.0f});
+        m_searchBarMenu->setID("search-bar-menu");
+        m_listLayer->addChild(m_searchBarMenu);
+
+        auto searchBackground = CCLayerColor::create({194, 114, 62, 255}, 356.0f, 30.0f);
+        searchBackground->setID("search-bar-background");
+        m_searchBarMenu->addChild(searchBackground);
+
+        auto searchSprite = CCSprite::createWithSpriteFrameName("gj_findBtn_001.png");
+        searchSprite->setScale(0.7f);
+        auto searchButton = CCMenuItemSpriteExtra::create(
+            searchSprite, this, menu_selector(KDLListLayer::onSearch)
+        );
+        searchButton->setPosition({337.0f, 15.0f});
+        searchButton->setID("search-button");
+        m_searchBarMenu->addChild(searchButton);
+
+        m_searchBar = TextInput::create(310.0f, "Search...");
+        m_searchBar->setPosition({165.0f, 15.0f});
+        m_searchBar->setTextAlign(TextInputAlign::Left);
+        auto inputNode = m_searchBar->getInputNode();
+        inputNode->setLabelPlaceholderScale(0.4f);
+        inputNode->setMaxLabelScale(0.4f);
+        auto searchBgSprite = m_searchBar->getBGSprite();
+        searchBgSprite->setContentSize({620.0f, 40.0f});
+        searchBgSprite->setScale(0.5f);
+        m_searchBar->setID("search-bar");
+        m_searchBarMenu->addChild(m_searchBar);
+
+        this->setTouchEnabled(true);
 
         loadTab(BASE_URL "buffverif/levels");
 
@@ -290,8 +330,7 @@ public:
     }
 
     void applyJson(matjson::Value const& json) {
-        m_allIds.clear();
-        m_currentPage = 0;
+        m_allLevels.clear();
         auto result = json.asArray();
         if (!result) {
             return;
@@ -301,16 +340,56 @@ public:
             if (!id) {
                 continue;
             }
-            m_allIds.push_back(id.unwrap());
+            m_allLevels.push_back({id.unwrap(), entry.get<std::string>("name").unwrapOr("")});
+        }
+        applyFilter();
+    }
+
+    void applyFilter() {
+        m_allIds.clear();
+        m_currentPage = 0;
+        auto query = utils::string::toLower(m_query);
+        for (auto& lvl : m_allLevels) {
+            if (query.empty()
+                || utils::string::toLower(lvl.name).find(query) != std::string::npos
+                || std::to_string(lvl.id).find(query) != std::string::npos) {
+                m_allIds.push_back(lvl.id);
+            }
         }
         updatePageArrows();
         fetchPage(0);
     }
 
+    void onSearch(CCObject*) {
+        if (m_searchBar) m_searchBar->defocus();
+
+        auto query = m_searchBar->getString();
+        if (m_query != query) {
+            m_query = query;
+            applyFilter();
+        }
+    }
+
+    void registerWithTouchDispatcher() override {
+        CCTouchDispatcher::get()->addTargetedDelegate(this, -600, false);
+    }
+
+    bool ccTouchBegan(CCTouch* touch, CCEvent*) override {
+        if (m_searchBar && m_searchBarMenu && m_searchBarMenu->isVisible()) {
+            auto localPos = m_searchBarMenu->convertToNodeSpace(touch->getLocation());
+            if (!m_searchBar->boundingBox().containsPoint(localPos)) {
+                m_searchBar->defocus();
+            }
+        }
+        return false;
+    }
     void fetchPage(int page) {
         int start = page * 10;
         int end = std::min(start + 10, (int)m_allIds.size());
-        if (start >= (int)m_allIds.size()) return;
+        if (start >= (int)m_allIds.size()) {
+            loadLevelsFinished(CCArray::create(), "");
+            return;
+        }
 
         std::string ids;
         for (int i = start; i < end; i++) {
@@ -325,18 +404,17 @@ public:
         glm->getOnlineLevels(search);
     }
 
-    void loadLevelsFinished(CCArray* levels, const char*) override {      
-        auto winSize = CCDirector::get()->getWinSize();
-        if (m_listLayer) {
-            m_listLayer->removeFromParent();
-            m_listLayer = nullptr;
+    void loadLevelsFinished(CCArray* levels, const char*) override {
+        if (auto listView = m_listLayer->m_listView) {
+            listView->removeFromParent();
+            listView->release();
+            m_listLayer->m_listView = nullptr;
         }
 
         auto listView = CustomListView::create(levels, BoomListType::Level, 190.0f, 356.0f);
-        m_listLayer = GJListLayer::create(listView, "KDL", {0, 0, 0, 180}, 356.0f, 190.0f, 0);
-        m_listLayer->setID("list-layer");
-        m_listLayer->setPosition(winSize / 2 - m_listLayer->getScaledContentSize() / 2);
-        this->addChild(m_listLayer, 1);
+        listView->retain();
+        m_listLayer->addChild(listView, 6, 9);
+        m_listLayer->m_listView = listView;
     }
 
     void loadLevelsFailed(const char*) override {}
@@ -363,6 +441,7 @@ public:
     }
 
     void onExit() override {
+        if (m_searchBar) m_searchBar->defocus();
         auto glm = GameLevelManager::sharedState();
         if (glm->m_levelManagerDelegate == this)
             glm->m_levelManagerDelegate = nullptr;
@@ -394,6 +473,12 @@ public:
             i++;
         }
 
+        m_query = "";
+        if (m_searchBar) {
+            m_searchBar->setString("");
+            m_searchBar->defocus();
+        }
+
         loadTab(urlObj->getCString());
     }
 
@@ -406,6 +491,7 @@ public:
     }
 
 	void onBack(CCObject*) {
+        if (m_searchBar) m_searchBar->defocus();
         GameManager::sharedState()->fadeInMenuMusic();
         CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
     }

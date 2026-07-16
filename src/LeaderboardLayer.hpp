@@ -89,6 +89,10 @@ protected:
     GJListLayer* m_list = nullptr;
     LoadingCircle* m_loadingCircle = nullptr;
     CCLabelBMFont* m_countLabel = nullptr;
+    CCMenu* m_searchBarMenu = nullptr;
+    TextInput* m_searchBar = nullptr;
+    std::string m_query;
+    std::vector<KDLLeaderboardEntry> m_allEntries;
     int m_requestId = 0;
 
     virtual const char* title() const { return "K.D.L. Leaderboard"; }
@@ -142,6 +146,39 @@ protected:
         fitKDLListTitle(m_list);
         this->addChild(m_list, 3);
 
+        m_searchBarMenu = CCMenu::create();
+        m_searchBarMenu->setContentSize({356.0f, 30.0f});
+        m_searchBarMenu->setPosition({0.0f, 190.0f});
+        m_searchBarMenu->setID("search-bar-menu");
+        m_list->addChild(m_searchBarMenu);
+
+        auto searchBackground = CCLayerColor::create({194, 114, 62, 255}, 356.0f, 30.0f);
+        searchBackground->setID("search-bar-background");
+        m_searchBarMenu->addChild(searchBackground);
+
+        auto searchSprite = CCSprite::createWithSpriteFrameName("gj_findBtn_001.png");
+        searchSprite->setScale(0.7f);
+        auto searchButton = CCMenuItemSpriteExtra::create(
+            searchSprite, this, menu_selector(LeaderboardLayer::onSearch)
+        );
+        searchButton->setPosition({337.0f, 15.0f});
+        searchButton->setID("search-button");
+        m_searchBarMenu->addChild(searchButton);
+
+        m_searchBar = TextInput::create(310.0f, "Search...");
+        m_searchBar->setPosition({165.0f, 15.0f});
+        m_searchBar->setTextAlign(TextInputAlign::Left);
+        auto inputNode = m_searchBar->getInputNode();
+        inputNode->setLabelPlaceholderScale(0.4f);
+        inputNode->setMaxLabelScale(0.4f);
+        auto searchBgSprite = m_searchBar->getBGSprite();
+        searchBgSprite->setContentSize({620.0f, 40.0f});
+        searchBgSprite->setScale(0.5f);
+        m_searchBar->setID("search-bar");
+        m_searchBarMenu->addChild(m_searchBar);
+
+        this->setTouchEnabled(true);
+
         m_loadingCircle = LoadingCircle::create();
         m_loadingCircle->setParentLayer(this);
         m_loadingCircle->setID("loading-circle");
@@ -192,9 +229,55 @@ protected:
                 // ignore stale responses from stuff like refresh spamming
                 if (requestId != self->m_requestId) return;
                 if (errorCode != 0) self->onLoadFailed(errorCode);
-                else self->populateList(entries);
+                else {
+                    self->m_allEntries = entries;
+                    self->applyFilter();
+                }
             });
         }).detach();
+    }
+
+    void applyFilter() {
+        if (m_query.empty()) {
+            populateList(m_allEntries);
+            return;
+        }
+        auto query = utils::string::toLower(m_query);
+        std::vector<KDLLeaderboardEntry> filtered;
+        for (auto& entry : m_allEntries) {
+            if (utils::string::toLower(entry.name).find(query) != std::string::npos)
+                filtered.push_back(entry);
+        }
+        populateList(filtered);
+    }
+
+    void onSearch(CCObject*) {
+        if (m_searchBar) m_searchBar->defocus();
+
+        auto query = m_searchBar->getString();
+        if (m_query != query) {
+            m_query = query;
+            applyFilter();
+        }
+    }
+
+    void registerWithTouchDispatcher() override {
+        CCTouchDispatcher::get()->addTargetedDelegate(this, -600, false);
+    }
+
+    bool ccTouchBegan(CCTouch* touch, CCEvent*) override {
+        if (m_searchBar && m_searchBarMenu && m_searchBarMenu->isVisible()) {
+            auto localPos = m_searchBarMenu->convertToNodeSpace(touch->getLocation());
+            if (!m_searchBar->boundingBox().containsPoint(localPos)) {
+                m_searchBar->defocus();
+            }
+        }
+        return false;
+    }
+
+    void onExit() override {
+        if (m_searchBar) m_searchBar->defocus();
+        CCLayer::onExit();
     }
 
     void populateList(std::vector<KDLLeaderboardEntry> const& entries) {
@@ -210,7 +293,7 @@ protected:
             cells->addObject(KDLLeaderboardCell::create(entry, isCreator(), index++));
         }
 
-        auto listView = ListView::create(cells, KDLLeaderboardCell::CELL_HEIGHT, 356.0f, 220.0f);
+        auto listView = ListView::create(cells, KDLLeaderboardCell::CELL_HEIGHT, 356.0f, 190.0f);
         listView->retain();
         m_list->addChild(listView, 6, 9);
         m_list->m_listView = listView;
@@ -236,6 +319,7 @@ protected:
     }
 
     void keyBackClicked() override {
+        if (m_searchBar) m_searchBar->defocus();
         CCDirector::get()->popSceneWithTransition(0.5f, PopTransition::kPopTransitionFade);
     }
 
