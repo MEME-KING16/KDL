@@ -1,3 +1,5 @@
+# 1.7.0
+- Added in the buffed platformer list!
 # 1.6.1
 - Fixed credits elements loading in and out randomly whens scrolling along with adding a search bar accross all K.D.L. pages.
 # 1.6.0

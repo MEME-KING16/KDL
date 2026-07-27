@@ -30,6 +30,12 @@ protected:
     CCMenuItemSpriteExtra* m_nextButton = nullptr;
     CCMenuItemSpriteExtra* m_discordButton = nullptr;
     CCMenuItemSpriteExtra* m_siteButton = nullptr;
+    std::vector<CCMenuItemSpriteExtra*> m_tabButtons;
+    std::vector<CCLabelBMFont*> m_tabLabels;
+    bool m_platformer = false;
+    int m_currentTab = 2;
+    CCNode* m_modeNode = nullptr;
+    CCSprite* m_modeIcon = nullptr;
     int m_currentPage = 0;
     std::string m_currentUrl;
 
@@ -126,6 +132,25 @@ protected:
         creditsBkg->setID("button-bkg");
         creditsButton->setID("credits-button");
 
+        // list type toggle button
+
+        auto modeNode = CCNode::create();
+        modeNode->setContentSize({30.0f, 30.0f});
+
+        auto modeBkg = CCScale9Sprite::create("GJ_button_01.png");
+        modeBkg->setContentSize({30.0f, 30.0f});
+        modeBkg->setPosition({15.0f, 15.0f});
+        modeNode->addChild(modeBkg);
+        m_modeNode = modeNode;
+
+        auto modeButton = CCMenuItemSpriteExtra::create(
+            modeNode, this, menu_selector(KDLListLayer::onModeToggle)
+        );
+
+        modeNode->setID("mode-node");
+        modeBkg->setID("button-bkg");
+        modeButton->setID("mode-toggle-button");
+
         // top "stuff"
 		auto topMenu = CCMenu::create();
         topMenu->setID("top-menu");
@@ -133,11 +158,13 @@ protected:
         topMenu->addChild(leaderboardButton);
         topMenu->addChild(creatorLeaderboardButton);
         topMenu->addChild(creditsButton);
+        topMenu->addChild(modeButton);
         topMenu->setPosition({0.0f, 0.0f});
         backButton->setPosition({25.0f, winSize.height - 25.0f});
         leaderboardButton->setPosition({25.0f, winSize.height - 65.0f});
         creatorLeaderboardButton->setPosition({25.0f, winSize.height - 100.0f});
         creditsButton->setPosition({25.0f, winSize.height - 135.0f});
+        modeButton->setPosition({25.0f, winSize.height - 170.0f});
         this->addChild(topMenu, 2);
 
         // not so top "stuff"  
@@ -176,12 +203,11 @@ protected:
         refreshMenu->setPosition({ winSize.width - 25.f, winSize.height - 25.f });
         this->addChild(refreshMenu, 2);
 
-        struct Tab { const char* label; const char* url; };
-        Tab tabs[] = {
-            {"Nerfed\nVerified", BASE_URL "nerfverif/levels"},
-            {"Nerfed\nUnverified", BASE_URL "nerfunverif/levels"},
-            {"Buffed\nVerified", BASE_URL "buffverif/levels"},
-            {"Buffed\nUnverified", BASE_URL "buffunverif/levels"},
+        const char* tabLabels[] = {
+            "Nerfed\nVerified",
+            "Nerfed\nUnverified",
+            "Buffed\nVerified",
+            "Buffed\nUnverified",
         };
 
         float tabW = 75.0f;
@@ -191,10 +217,11 @@ protected:
 
         int defaultTab = 2;
         int tabIndex = 0;
-        for (auto& tab : tabs) {
-            auto lbl = CCLabelBMFont::create(tab.label, "bigFont.fnt");
+        for (auto& tabLabel : tabLabels) {
+            auto lbl = CCLabelBMFont::create(tabLabel, "bigFont.fnt");
             lbl->setID("label");
             lbl->setScale(0.3f);
+            m_tabLabels.push_back(lbl);
 
             bool active = tabIndex == defaultTab;
 
@@ -224,9 +251,10 @@ protected:
                 node, this, menu_selector(KDLListLayer::onTabPressed)
             );
             button->setID(fmt::format("tab-button-{}", tabIndex));
-            button->setUserObject(CCString::create(tab.url));
+            button->setTag(tabIndex);
             button->setPosition({tabStartX + tabIndex * (tabW + tabGap), 25.0f});
             m_tabMenu->addChild(button);
+            m_tabButtons.push_back(button);
             tabIndex++;
         }
 
@@ -292,7 +320,8 @@ protected:
 
         this->setTouchEnabled(true);
 
-        loadTab(BASE_URL "buffverif/levels");
+        updateModeIcon();
+        selectTab(defaultTab);
 
         return true;
 	}
@@ -458,19 +487,30 @@ public:
         GameLevelManager::sharedState()->m_levelManagerDelegate = this;
     }
 
-    void onTabPressed(CCObject* sender) {
-        auto btn = static_cast<CCMenuItemSpriteExtra*>(sender);
-        auto urlObj = static_cast<CCString*>(btn->getUserObject());
-        if (!urlObj) return;
+    std::string urlForTab(int idx) {
+        static const char* classicUrls[] = {
+            BASE_URL "nerfverif/levels",
+            BASE_URL "nerfunverif/levels",
+            BASE_URL "buffverif/levels",
+            BASE_URL "buffunverif/levels",
+        };
+        static const char* platUrls[] = {
+            "",
+            "",
+            BASE_URL "platverif/levels",
+            BASE_URL "platunverif/levels",
+        };
+        return m_platformer ? platUrls[idx] : classicUrls[idx];
+    }
 
-        int i = 0;
-        for (auto* child : CCArrayExt<CCNode*>(m_tabMenu->getChildren())) {
-            if (child == m_prevButton || child == m_nextButton) continue;
-            if (i >= (int)m_tabBkgsGreen.size()) break;
-            bool active = child == btn;
+    void selectTab(int idx) {
+        if (m_platformer && idx < 2) return;
+        m_currentTab = idx;
+
+        for (int i = 0; i < (int)m_tabButtons.size(); i++) {
+            bool active = i == idx;
             m_tabBkgsGreen[i]->setVisible(!active);
             m_tabBkgsBlue[i]->setVisible(active);
-            i++;
         }
 
         m_query = "";
@@ -479,7 +519,39 @@ public:
             m_searchBar->defocus();
         }
 
-        loadTab(urlObj->getCString());
+        loadTab(urlForTab(idx));
+    }
+
+    void onTabPressed(CCObject* sender) {
+        selectTab(static_cast<CCMenuItemSpriteExtra*>(sender)->getTag());
+    }
+
+    void updateModeIcon() {
+        if (m_modeIcon) m_modeIcon->removeFromParent();
+        m_modeIcon = CCSprite::createWithSpriteFrameName(
+            m_platformer ? "GJ_bigMoon_001.png" : "GJ_bigStar_001.png"
+        );
+        if (!m_modeIcon) return;
+        m_modeIcon->setScale(20.0f / m_modeIcon->getContentHeight());
+        m_modeIcon->setPosition({15.0f, 15.0f});
+        m_modeIcon->setID("mode-icon");
+        m_modeNode->addChild(m_modeIcon);
+    }
+
+    void onModeToggle(CCObject*) {
+        m_platformer = !m_platformer;
+        updateModeIcon();
+
+        ccColor3B col = m_platformer ? ccColor3B{90, 90, 90} : ccColor3B{255, 255, 255};
+        for (int i = 0; i < 2; i++) {
+            m_tabButtons[i]->setEnabled(!m_platformer);
+            m_tabBkgsGreen[i]->setColor(col);
+            m_tabBkgsBlue[i]->setColor(col);
+            m_tabLabels[i]->setColor(col);
+            m_tabLabels[i]->setOpacity(m_platformer ? 160 : 255);
+        }
+
+        selectTab(m_platformer && m_currentTab < 2 ? 2 : m_currentTab);
     }
 
     void onDiscordButton(CCObject* sender) {

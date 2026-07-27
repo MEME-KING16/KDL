@@ -18,7 +18,7 @@ class $modify(MyCreatorLayer, CreatorLayer) {
 			return false;
 		}
         
-        // what the fuck is your codebase -antic let me fix it :)
+        // I think the codebase is good enough now :) -antic
 
 		auto KDLButton = CCMenuItemSpriteExtra::create(
 			CCSprite::create("icon.png"_spr),
